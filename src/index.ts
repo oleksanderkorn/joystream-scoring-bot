@@ -8,7 +8,7 @@ dotenv.config();
 const PORT = process.env.PORT ? +process.env.PORT : 3000;
 const tgApiKey = process.env.TG_API_KEY || "";
 const bot = new TelegramBot(tgApiKey, { polling: true });
-moment.locale("ru");
+moment.locale("en");
 
 const loadScoringPeriodData = async () => {
   const url =
@@ -59,23 +59,17 @@ bot.on("message", (msg: TelegramBot.Message) => {
       const endDate = moment.parseZone(scoringData.currentScoringPeriod.ends);
       const duration = moment.duration(endDate.diff(moment()));
       const daysDuration = duration.asDays().toFixed();
-      let dayText = "дней";
+      let dayText = "days";
       if (daysDuration === "1") {
-        dayText = "день";
-      } else if (
-        daysDuration === "2" ||
-        daysDuration === "3" ||
-        daysDuration === "4"
-      ) {
-        dayText = "дня";
+        dayText = "day";
       }
-      const daysLeft = `***${duration
+      const daysLeft = `${duration
         .asDays()
-        .toFixed()} ${dayText} в ${endDate.format("dddd DD MMM")} в ${endDate.format(
+        .toFixed()} ${dayText} on ${endDate.format("dddd DD MMM")} at ${endDate.format(
         "HH:mm"
-      )}***`;
+      )}`;
       const deadline = endDate.add(5, "d").format("dddd DD MMM HH:mm");
-      const messageContent = `Приветствую ${userParsed}!\nТекущий отчетный период ***#${scoringData.currentScoringPeriod.scoringPeriodId}*** заканчивается через ${daysLeft}\nУспей подать отчет до окончания срока подачи ***${deadline}***`;
+      const messageContent = `Hello ${userParsed}!\nThe current scoring period ***#${scoringData.currentScoringPeriod.scoringPeriodId}*** ends in ***${daysLeft}***\nPlease make sure to submit your before the deadline ***${deadline}***`;
       bot.sendMessage(chatId, messageContent, options);
     }
   }
