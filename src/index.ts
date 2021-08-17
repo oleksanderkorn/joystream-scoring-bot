@@ -35,16 +35,14 @@ interface ScoringPeriodData {
   };
 }
 
+let nextSyncDate = moment();
 let scoringData = {} as ScoringPeriodData;
-(async () => {
-  try {
-    scoringData = await loadScoringPeriodData();
-  } catch (e) {
-    // Deal with the fact the chain failed
-  }
-})();
 
-bot.on("message", (msg: TelegramBot.Message) => {
+bot.on("message", async (msg: TelegramBot.Message) => {
+  if (nextSyncDate.isBefore(moment())) {
+    scoringData = await loadScoringPeriodData();
+    nextSyncDate = moment.parseZone(scoringData.currentScoringPeriod.ends);
+  }
   if (msg && msg.from) {
     console.log(msg.chat);
     const chatId = msg.chat.id;
