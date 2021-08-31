@@ -37,6 +37,7 @@ interface ScoringPeriodData {
 
 let nextSyncDate = moment();
 let scoringData = {} as ScoringPeriodData;
+const messageDeletionTimeout = 10000; // 10 seconds
 
 bot.on("message", async (msg: TelegramBot.Message) => {
   if (nextSyncDate.isBefore(moment())) {
@@ -74,7 +75,16 @@ bot.on("message", async (msg: TelegramBot.Message) => {
       )} в ${endDate.format("HH:mm")}***`;
       const deadline = endDate.add(5, "d").format("dddd DD MMM HH:mm");
       const messageContent = `Приветствую ${userParsed}!\nТекущий отчетный период ***#${scoringData.currentScoringPeriod.scoringPeriodId}*** заканчивается через ${daysLeft}\nУспей подать отчет до окончания срока подачи ***${deadline}***`;
-      bot.sendMessage(chatId, messageContent, options);
+      bot.sendMessage(chatId, messageContent, options).then( (message) => 
+        setTimeout(() => {
+          try {
+            bot.deleteMessage(chatId, msg.message_id.toString())
+          } catch (e) {}
+          try {
+            bot.deleteMessage(chatId, message.message_id.toString())
+          } catch (e) {}
+        }, messageDeletionTimeout)
+      )
     }
   }
 });
