@@ -5,7 +5,7 @@ import moment from "moment";
 
 dotenv.config();
 
-const PORT = process.env.PORT ? +process.env.PORT : 3000;
+const PORT = process.env.PORT ? +process.env.PORT : 3001;
 const tgApiKey = process.env.TG_API_KEY || "";
 const bot = new TelegramBot(tgApiKey, { polling: true });
 moment.locale("en");
@@ -37,6 +37,7 @@ interface ScoringPeriodData {
 
 let nextSyncDate = moment();
 let scoringData = {} as ScoringPeriodData;
+const messageDeletionTimeout = 10000; // 10 seconds
 
 bot.on("message", async (msg: TelegramBot.Message) => {
   if (nextSyncDate.isBefore(moment())) {
@@ -68,7 +69,16 @@ bot.on("message", async (msg: TelegramBot.Message) => {
       )}`;
       const deadline = endDate.add(5, "d").format("dddd DD MMM HH:mm");
       const messageContent = `Hello ${userParsed}!\nThe current scoring period ***#${scoringData.currentScoringPeriod.scoringPeriodId}*** ends in ***${daysLeft}***\nPlease make sure to submit your before the deadline ***${deadline}***`;
-      bot.sendMessage(chatId, messageContent, options);
+      bot.sendMessage(chatId, messageContent, options).then( (message) => 
+        setTimeout(() => {
+          try {
+            bot.deleteMessage(chatId, msg.message_id.toString())
+          } catch (e) {}
+          try {
+            bot.deleteMessage(chatId, message.message_id.toString())
+          } catch (e) {}
+        }, messageDeletionTimeout)
+      )
     }
   }
 });
