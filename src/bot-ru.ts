@@ -92,7 +92,7 @@ bot.on("message", async (msg: TelegramBot.Message) => {
       const previousPeriodDeadline = isLastScoringClosed
         ? `Подача отчетов за прошлый период ***#${prevPeriodId}*** окончена\n`
         : `Подача отчетов за прошлый период ***#${prevPeriodId}*** открыта до ***${prevDeadline}***\n`;
-      const latestGradedPeriod = `Последний период с начисленными баллами - ***#${lastGradedPeriod}***\n${leaderboardLink}`;
+      const latestGradedPeriod = `Последний период с начисленными баллами - ***#${lastGradedPeriod}*** - ${leaderboardLink}`;
       const messageContent = `${hello}${currentScoring}${currentDeadline}${previousPeriodDeadline}${latestGradedPeriod}`;
       bot.sendMessage(chatId, messageContent, options).then((message) => {
         try {

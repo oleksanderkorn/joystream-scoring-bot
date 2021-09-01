@@ -86,7 +86,7 @@ bot.on("message", async (msg: TelegramBot.Message) => {
       const previousPeriodDeadline = isLastScoringClosed
         ? `Reports for the previous period ***#${prevPeriodId}*** are closed\n`
         : `Reports for the previous period ***#${prevPeriodId}*** can be submitted before ***${prevDeadline}***\n`;
-      const latestGradedPeriod = `Latest graded period - ***#${lastGradedPeriod}***\n${leaderboardLink}`;
+      const latestGradedPeriod = `Latest graded period - ***#${lastGradedPeriod}*** - ${leaderboardLink}`;
       const messageContent = `${hello}${currentScoring}${currentDeadline}${previousPeriodDeadline}${latestGradedPeriod}`;
       bot.sendMessage(chatId, messageContent, options).then((message) => {
         try {
