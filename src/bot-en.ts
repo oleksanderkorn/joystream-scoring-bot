@@ -5,8 +5,7 @@ import moment from "moment";
 
 dotenv.config();
 
-const PORT = process.env.PORT ? +process.env.PORT : 3001;
-const tgApiKey = process.env.TG_API_KEY || "";
+const tgApiKey = process.env.TG_API_KEY_EN || "";
 const bot = new TelegramBot(tgApiKey, { polling: true });
 moment.locale("en");
 

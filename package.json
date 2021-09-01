@@ -7,11 +7,10 @@
     "license": "MIT",
     "scripts": {
         "build": "tsc",
-        "prestart": "tsc",
-        "start": "nodemon src/index.ts",
-        "server": "ts-node src/index.ts",
-        "pm2en": "pm2 start dist/bot-en.js -n bot-en",
-        "pm2ru": "pm2 start dist/bot-ru.js -n bot-ru"
+        "start-ru": "tsc && nodemon src/bot-ru.ts",
+        "start-en": "tsc && nodemon src/bot-en.ts",
+        "pm2en": "tsc && pm2 start dist/bot-en.js -n bot-en",
+        "pm2ru": "tsc && pm2 start dist/bot-ru.js -n bot-ru"
     },
     "dependencies": {
         "@types/express": "^4.17.13",
