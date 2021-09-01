@@ -6,12 +6,14 @@ Send Notification with the scoring period date.
 
 Can be updated using `.env` file.
 
-`PORT` - port to run the app.
-
-`TG_API_KEY` - api key of the telegram bot
+`TG_API_KEY_RU` - api key of the telegram bot for the Russion Version
+`TG_API_KEY_EN` - api key of the telegram bot for the English Version
 
 ## Commands
 
 `yarn` install dependencies
 
-`yarn dev` run in dev mode using ts-node
+`yarn start-en` run english version in dev mode
+`yarn start-ru` run russian version in dev mode
+`yarn pm2en` run english version using pm2
+`yarn pm2ru` run russian version using pm2
