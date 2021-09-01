@@ -37,11 +37,13 @@ interface ScoringPeriodData {
 
 let nextSyncDate = moment();
 let scoringData = {} as ScoringPeriodData;
-const messageDeletionTimeout = 10000; // 10 seconds
+let lastGradedPeriod = null as number | null;
+const messageDeletionTimeout = 30000; // 30 seconds
 
 bot.on("message", async (msg: TelegramBot.Message) => {
   if (nextSyncDate.isBefore(moment())) {
     scoringData = await loadScoringPeriodData();
+    lastGradedPeriod = scoringData.lastPeriod.scoringPeriodId;
     nextSyncDate = moment.parseZone(scoringData.currentScoringPeriod.ends);
   }
   if (msg && msg.from) {
@@ -55,6 +57,7 @@ bot.on("message", async (msg: TelegramBot.Message) => {
     const options: SendMessageOptions = { parse_mode: "Markdown" };
 
     if (msg.text?.startsWith("/scoring")) {
+      const startDate = moment.parseZone(scoringData.currentScoringPeriod.started);
       const endDate = moment.parseZone(scoringData.currentScoringPeriod.ends);
       const duration = moment.duration(endDate.diff(moment()));
       const daysDuration = duration.asDays().toFixed();
@@ -74,17 +77,33 @@ bot.on("message", async (msg: TelegramBot.Message) => {
         "dddd DD MMM"
       )} в ${endDate.format("HH:mm")}***`;
       const deadline = endDate.add(5, "d").format("dddd DD MMM HH:mm");
-      const messageContent = `Приветствую ${userParsed}!\nТекущий отчетный период ***#${scoringData.currentScoringPeriod.scoringPeriodId}*** заканчивается через ${daysLeft}\nУспей подать отчет до окончания срока подачи ***${deadline}***`;
-      bot.sendMessage(chatId, messageContent, options).then( (message) => 
+      const prevDeadline = startDate
+        .add(5, "d")
+        .format("dddd DD MMM HH:mm");
+      const hello = `Приветствую ${userParsed}!\n`;
+      const currentPeriodId = scoringData.currentScoringPeriod.scoringPeriodId;
+      const prevPeriodId = scoringData.currentScoringPeriod.scoringPeriodId - 1;
+      const currentScoring = `Текущий отчетный период ***#${currentPeriodId}*** заканчивается через ${daysLeft}\n`;
+      const currentDeadline = `Успей подать отчет за период ***#${currentPeriodId}*** до окончания срока подачи ***${deadline}***\n`;
+      const isLastScoringClosed = endDate
+        .add(5, "d")
+        .subtract(2, "w")
+        .isAfter(moment());
+      const previousPeriodDeadline = isLastScoringClosed
+        ? `Подача отчетов за прошлый период ***#${prevPeriodId}*** окончена\n`
+        : `Подача отчетов за прошлый период ***#${prevPeriodId}*** открыта до ***${prevDeadline}***\n`;
+      const latestGradedPeriod = `Последний период с начисленными баллами - ***#${lastGradedPeriod}***`;
+      const messageContent = `${hello}${currentScoring}${currentDeadline}${previousPeriodDeadline}${latestGradedPeriod}`;
+      bot.sendMessage(chatId, messageContent, options).then((message) =>
         setTimeout(() => {
           try {
-            bot.deleteMessage(chatId, msg.message_id.toString())
+            bot.deleteMessage(chatId, msg.message_id.toString());
           } catch (e) {}
           try {
             bot.deleteMessage(chatId, message.message_id.toString())
           } catch (e) {}
         }, messageDeletionTimeout)
-      )
+      );
     }
   }
 });
