@@ -53,7 +53,8 @@ const loadScoringPeriodData = async () => {
 client.on("message", async (message) => {
   await reloadScoringData();
   if (message.content === "!help") {
-    message.channel.send({content: "Supported commands:\n!scoring - Get the scoring period information\n!help - get help"}).then( (msg: { delete: () => void; }) => {
+    const helpMessage = "I can help to know the state of Joystream scoring periods!\nIn channels I delete my messages after 30 seconds, but in dm they will be kept.\nSupported commands:\n!scoring - Get the scoring period information\n!help - get help";
+    message.channel.send({content: helpMessage}).then( (msg: { delete: () => void; }) => {
       if (message.channel.type !== "dm") {
         message.delete()
         setTimeout(() => {
