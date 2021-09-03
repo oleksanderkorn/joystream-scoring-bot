@@ -33,7 +33,7 @@ const client = new Client();
 let nextSyncDate = moment();
 let scoringData = {} as ScoringPeriodData;
 let lastGradedPeriod = null as number | null;
-const messageDeletionTimeout = 30000; // 30 seconds
+const messageDeletionTimeout = 60000;
 
 client.login(discordToken);
 client.on("ready", async () => {
