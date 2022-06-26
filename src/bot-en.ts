@@ -45,19 +45,19 @@ bot.on("message", async (msg: TelegramBot.Message) => {
           ? "Денег нет, но вы держитесь!"
           : "Налетай, торопись, покупай живопИсь!"
       } `;
-      const messageContent = `Привет, ${userParsed}. Баланс: ${balance} BCH. ${status}`;
-      sendMessage(chatId, messageContent, msg);
-    } else if (msg.text?.startsWith("/notify")) {
-      invalidateBalanceCheck();
-      chats.add(chatId);
-      scheduleBalanceCheck();
-      const messageContent = `Уведомления о положительном балансе включены, ${userParsed}.`;
+      const messageContent = `Привет, ${userParsed}\nБаланс: ${balance} BCH.\n${status}`;
       sendMessage(chatId, messageContent, msg);
     } else if (msg.text?.startsWith("/notifyoff")) {
       invalidateBalanceCheck();
       chats.delete(chatId);
       scheduleBalanceCheck();
       const messageContent = `Уведомления о положительном балансе отключены, ${userParsed}.`;
+      sendMessage(chatId, messageContent, msg);
+    } else if (msg.text?.startsWith("/notify")) {
+      invalidateBalanceCheck();
+      chats.add(chatId);
+      scheduleBalanceCheck();
+      const messageContent = `Уведомления о положительном балансе включены, ${userParsed}.`;
       sendMessage(chatId, messageContent, msg);
     }
   }
@@ -89,6 +89,7 @@ function invalidateBalanceCheck() {
 }
 
 async function scheduleBalanceCheck() {
+  console.log(`Scheduling task for chat's [${Array.from(chats.values())}]`);
   intervalRef = setTimeout(async () => {
     try {
       const { balance } = await loadBalance();
