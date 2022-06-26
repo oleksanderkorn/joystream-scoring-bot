@@ -89,9 +89,9 @@ function invalidateBalanceCheck() {
 }
 
 async function scheduleBalanceCheck() {
-  const { balance } = await loadBalance();
-  intervalRef = setTimeout(() => {
+  intervalRef = setTimeout(async () => {
     try {
+      const { balance } = await loadBalance();
       chats.forEach(async (chatId) => {
         const status = `${
           balance < 1
