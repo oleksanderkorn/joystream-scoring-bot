@@ -2,7 +2,6 @@ import TelegramBot, { SendMessageOptions } from "node-telegram-bot-api";
 import * as dotenv from "dotenv";
 import axios from "axios";
 import moment from "moment";
-import { clear } from "console";
 interface ScoringPeriodData {
   balance: number;
 }
@@ -90,7 +89,7 @@ function invalidateBalanceCheck() {
 
 async function scheduleBalanceCheck() {
   console.log(`Scheduling task for chat's [${Array.from(chats.values())}]`);
-  intervalRef = setTimeout(async () => {
+  intervalRef = setInterval(async () => {
     try {
       const { balance } = await loadBalance();
       chats.forEach(async (chatId) => {
