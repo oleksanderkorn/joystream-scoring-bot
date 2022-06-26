@@ -47,13 +47,13 @@ bot.on("message", async (msg: TelegramBot.Message) => {
       } `;
       const messageContent = `Привет, ${userParsed}. Баланс: ${balance} BCH. ${status}`;
       sendMessage(chatId, messageContent, msg);
-    } else if (msg.text?.startsWith("/notify-on")) {
+    } else if (msg.text?.startsWith("/notify")) {
       invalidateBalanceCheck();
       chats.add(chatId);
       scheduleBalanceCheck();
       const messageContent = `Уведомления о положительном балансе включены, ${userParsed}.`;
       sendMessage(chatId, messageContent, msg);
-    } else if (msg.text?.startsWith("/notify-off")) {
+    } else if (msg.text?.startsWith("/notifyoff")) {
       invalidateBalanceCheck();
       chats.delete(chatId);
       scheduleBalanceCheck();
