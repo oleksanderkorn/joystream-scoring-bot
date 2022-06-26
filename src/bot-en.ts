@@ -45,12 +45,19 @@ bot.on("message", async (msg: TelegramBot.Message) => {
           ? "Денег нет, но вы держитесь!"
           : "Налетай, торопись, покупай живопИсь!"
       } `;
-
+      const messageContent = `Привет, ${userParsed}. Баланс: ${balance} BCH. ${status}`;
+      sendMessage(chatId, messageContent, msg);
+    } else if (msg.text?.startsWith("/notify-on")) {
       invalidateBalanceCheck();
       chats.add(chatId);
       scheduleBalanceCheck();
-
-      const messageContent = `Привет, ${userParsed}. Баланс: ${balance} BCH. ${status}`;
+      const messageContent = `Уведомления о положительном балансе включены, ${userParsed}.`;
+      sendMessage(chatId, messageContent, msg);
+    } else if (msg.text?.startsWith("/notify-off")) {
+      invalidateBalanceCheck();
+      chats.delete(chatId);
+      scheduleBalanceCheck();
+      const messageContent = `Уведомления о положительном балансе отключены, ${userParsed}.`;
       sendMessage(chatId, messageContent, msg);
     }
   }
@@ -99,5 +106,3 @@ async function scheduleBalanceCheck() {
     } catch (e) {}
   }, messageDeletionTimeout);
 }
-
-scheduleBalanceCheck();
