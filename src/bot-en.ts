@@ -15,9 +15,10 @@ const options: SendMessageOptions = {
   disable_web_page_preview: true,
 };
 
+const messageDeletionTimeout = 60000;
 const chats: Set<number> = new Set();
 let intervalRef: NodeJS.Timeout | undefined;
-const messageDeletionTimeout = 60000;
+let lastKnownBalance = 0;
 
 moment.locale("ru");
 
@@ -98,9 +99,10 @@ async function scheduleBalanceCheck() {
             ? "Денег нет, но вы держитесь!"
             : "Налетай, торопись, покупай живопИсь!"
         } `;
-        if (balance > 1) {
+        if (balance !== lastKnownBalance) {
           const messageContent = `Баланс: ${balance} BCH. ${status}`;
           sendMessage(chatId, messageContent, undefined);
+          lastKnownBalance = balance;
         }
       });
     } catch (e) {}
