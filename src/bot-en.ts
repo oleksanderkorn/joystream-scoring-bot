@@ -61,8 +61,8 @@ bot.on("message", async (msg: TelegramBot.Message) => {
       sendMessage(chatId, messageContent, msg);
     } else if (msg.text?.startsWith("/react")) {
       invalidateBalanceCheck();
-      const messageContent = `Ебать у вас тут весело! `;
-      sendMessage(chatId, messageContent, msg);
+      const messageContent = `Ебать у вас тут весело!`;
+      sendMessage(chatId, messageContent, msg, false);
     }
   }
 });
@@ -70,7 +70,8 @@ bot.on("message", async (msg: TelegramBot.Message) => {
 function sendMessage(
   chatId: number,
   messageContent: string,
-  msg: TelegramBot.Message | undefined
+  msg: TelegramBot.Message | undefined,
+  shouldDelete: Boolean = true
 ) {
   bot.sendMessage(chatId, messageContent, options).then((message) => {
     try {
@@ -80,7 +81,9 @@ function sendMessage(
     } catch (e) {}
     setTimeout(() => {
       try {
-        bot.deleteMessage(chatId, message.message_id.toString());
+        if (shouldDelete) {
+          bot.deleteMessage(chatId, message.message_id.toString());
+        }
       } catch (e) {}
     }, messageDeletionTimeout);
   });
