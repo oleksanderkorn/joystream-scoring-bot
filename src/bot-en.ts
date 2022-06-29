@@ -59,6 +59,10 @@ bot.on("message", async (msg: TelegramBot.Message) => {
       scheduleBalanceCheck();
       const messageContent = `Уведомления о положительном балансе включены, ${userParsed}.`;
       sendMessage(chatId, messageContent, msg);
+    } else if (msg.text?.startsWith("/react")) {
+      invalidateBalanceCheck();
+      const messageContent = `Ебать у вас тут весело! `;
+      sendMessage(chatId, messageContent, msg);
     }
   }
 });
